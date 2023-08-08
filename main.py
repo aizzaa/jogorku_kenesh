@@ -2,7 +2,7 @@ import requests
 from bs4 import BeautifulSoup, Tag
 from typing import List
 import json
-
+import csv
 
 def get_html(url: str):
     response = requests.get(url)
@@ -54,6 +54,14 @@ def write_to_json(data: List[Tag]):
     with open('deputaty.json', 'w') as deputs:
         json.dump(data, deputs, indent= 4, ensure_ascii= False)
 
+
+def write_to_csv(data: List[Tag]):
+    with open('deputaty.csv', 'w') as deputs:
+        fieldsnames = data[0].keys()
+        writer = csv.DictWriter(deputs, fieldnames=fieldsnames)
+        writer.writeheader()
+        writer.writerows(data)
+
 def main():
     url = 'http://kenesh.kg/ru/deputy/list/35'
     pages = '?pages'
@@ -63,6 +71,7 @@ def main():
     cards = get_cards_from_soup(soup)
     data = get_data_from_cards(cards)
     write_to_json(data)
+    write_to_csv(data)
     print(data)
 
 if __name__ == '__main__':
